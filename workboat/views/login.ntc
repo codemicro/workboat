@@ -1,0 +1,5 @@
+{{ import "github.com/codemicro/workboat/workboat/paths" }}
+
+{{ func LoginPage() }}
+    <a href="{[ paths.Make(paths.AuthOauthOutbound) ]}">Click here to login via Gitea</a>
+{{ endfunc }}
