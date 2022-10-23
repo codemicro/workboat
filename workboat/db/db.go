@@ -19,6 +19,8 @@ type DB struct {
 	ContextTimeout time.Duration
 }
 
+var ErrNotFound = errors.New("not found")
+
 func New() (*DB, error) {
 	dsn := config.Database.Filename
 	log.Info().Msg("connecting to database")

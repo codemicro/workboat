@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/codemicro/workboat/workboat/config"
+	"github.com/codemicro/workboat/workboat/core"
 	"github.com/codemicro/workboat/workboat/db"
 	"github.com/codemicro/workboat/workboat/endpoints"
 	"github.com/pkg/errors"
@@ -23,7 +24,9 @@ func run() error {
 		return errors.Wrap(err, "failed migration")
 	}
 
-	e := endpoints.New(database)
+	giteaClient := core.NewGiteaClient()
+
+	e := endpoints.New(database, giteaClient)
 	app := e.SetupApp()
 
 	serveAddr := config.HTTP.Host + ":" + strconv.Itoa(config.HTTP.Port)

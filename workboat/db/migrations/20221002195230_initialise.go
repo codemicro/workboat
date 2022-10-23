@@ -9,7 +9,7 @@ import (
 
 func init() {
 	tps := []any{
-		(*models.User)(nil),
+		(*models.Session)(nil),
 	}
 
 	mig.MustRegister(func(ctx context.Context, db *bun.DB) error {

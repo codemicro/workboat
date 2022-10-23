@@ -15,9 +15,11 @@ require (
 )
 
 require (
+	code.gitea.io/sdk/gitea v0.15.1 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/fatih/color v1.13.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/hashicorp/go-version v1.2.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/klauspost/compress v1.15.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

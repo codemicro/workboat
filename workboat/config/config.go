@@ -40,8 +40,10 @@ var Gitea = struct {
 	BaseURL           string
 	OauthClientID     string
 	OauthClientSecret string
+	AccessToken       string
 }{
 	BaseURL:           strings.TrimSuffix(asString(required("gitea.baseURL")), "/"),
 	OauthClientID:     asString(required("gitea.oauth.clientID")),
 	OauthClientSecret: asString(required("gitea.oauth.clientSecret")),
+	AccessToken:       asString(required("gitea.accessToken")),
 }
