@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-//go:generate ego
+//go:generate ego -v
 
 type RenderFunc func(ctx context.Context, w io.Writer)
 
