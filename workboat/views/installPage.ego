@@ -1,0 +1,14 @@
+<%
+package views
+
+import "github.com/codemicro/workboat/workboat/paths"
+
+func InstallPage(ctx context.Context, w io.Writer) {
+%>
+    <ego:Page Title="Login" UseHTMX=true>
+        <h1>Install into repository</h1>
+        <div hx-get="<%= paths.Make(paths.InstallSelectRepository) %>" hx-trigger="load" hx-swap="outerHTML">
+            Loading...
+        </div>
+    </ego:Page>
+<% } %>

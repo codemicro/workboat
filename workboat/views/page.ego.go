@@ -11,38 +11,47 @@ import "io"
 import "context"
 
 type Page struct {
-	Title string
-	Head  func()
-	Yield func()
+	Title   string
+	UseHTMX bool
+	Head    func()
+	Yield   func()
 }
 
 func (p *Page) Render(ctx context.Context, w io.Writer) {
 
-//line page.ego:12
+//line page.ego:13
 	_, _ = io.WriteString(w, "\n\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n    <title>")
-//line page.ego:18
+//line page.ego:19
 	_, _ = io.WriteString(w, html.EscapeString(fmt.Sprint(p.Title)))
-//line page.ego:18
+//line page.ego:19
 	_, _ = io.WriteString(w, "</title>\n    <link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi\" crossorigin=\"anonymous\">\n    ")
-//line page.ego:20
+//line page.ego:21
+	if p.UseHTMX {
+//line page.ego:22
+		_, _ = io.WriteString(w, "\n        <script src=\"https://unpkg.com/htmx.org@1.8.3\"></script>\n    ")
+//line page.ego:23
+	}
+//line page.ego:24
+	_, _ = io.WriteString(w, "\n    ")
+//line page.ego:24
 	if p.Head != nil {
 		p.Head()
 	}
-//line page.ego:23
+//line page.ego:27
 	_, _ = io.WriteString(w, "\n</head>\n<body>\n    <nav class=\"navbar navbar-dark bg-dark\">\n        <div class=\"container-fluid\">\n            <span class=\"navbar-brand mb-0 h1\">Workboat</span>\n        </div>\n    </nav>\n\n    ")
-//line page.ego:31
-	if p.Yield != nil {
-//line page.ego:32
-		_, _ = io.WriteString(w, "\n        <div class=\"container mt-3\">\n            ")
-//line page.ego:33
-		p.Yield()
-//line page.ego:34
-		_, _ = io.WriteString(w, "\n        </div>\n    ")
 //line page.ego:35
-	}
+	if p.Yield != nil {
 //line page.ego:36
+		_, _ = io.WriteString(w, "\n        <div class=\"container mt-3\">\n            ")
+//line page.ego:37
+		p.Yield()
+//line page.ego:38
+		_, _ = io.WriteString(w, "\n        </div>\n    ")
+//line page.ego:39
+	}
+//line page.ego:40
 	_, _ = io.WriteString(w, "\n\n    <script src=\"https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js\" integrity=\"sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3\" crossorigin=\"anonymous\"></script>\n</body>\n</html>\n\n")
-//line page.ego:41
+//line page.ego:45
 }
 
 var _ fmt.Stringer

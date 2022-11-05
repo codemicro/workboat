@@ -15,6 +15,9 @@ const (
 	AuthOauth         = Auth + "/oauth"
 	AuthOauthOutbound = AuthOauth + "/outbound"
 	AuthOauthInbound  = AuthOauth + "/inbound"
+
+	Install                 = "/install"
+	InstallSelectRepository = "/install/selectRepository"
 )
 
 func Make(path string, replacements ...any) string {

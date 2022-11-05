@@ -42,6 +42,9 @@ func (e *Endpoints) SetupApp() *fiber.App {
 	app.Get(paths.AuthOauthOutbound, e.AuthOauthOutbound)
 	app.Get(paths.AuthOauthInbound, e.AuthOauthInbound)
 
+	app.Get(paths.Install, e.InstallPage)
+	app.Get(paths.InstallSelectRepository, e.InstallPage_SelectRepository)
+
 	return app
 }
 
@@ -55,5 +58,7 @@ func (e *Endpoints) loginThenReturn(ctx *fiber.Ctx) error {
 		return errors.WithStack(err)
 	}
 
-	return ctx.Redirect(paths.Make(paths.AuthOauthOutbound + "?state=" + state))
+	nextPath := paths.Make(paths.AuthOauthOutbound + "?state=" + state)
+
+	return ctx.Redirect(nextPath)
 }

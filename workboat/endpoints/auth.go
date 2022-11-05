@@ -105,10 +105,7 @@ func (lsm *loginStateManager) Worker() {
 }
 
 func (e *Endpoints) AuthLogin(ctx *fiber.Ctx) error {
-	ctx.Type("html")
-	return ctx.SendString(
-		views.Render(views.LoginPage),
-	)
+	return views.Render(ctx, views.LoginPage)
 }
 
 func (e *Endpoints) AuthOauthOutbound(ctx *fiber.Ctx) error {

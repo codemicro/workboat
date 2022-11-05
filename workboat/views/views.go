@@ -1,17 +1,19 @@
 package views
 
 import (
+	"bytes"
 	"context"
+	"github.com/gofiber/fiber/v2"
 	"io"
-	"strings"
 )
 
 //go:generate ego -v
 
 type RenderFunc func(ctx context.Context, w io.Writer)
 
-func Render(f RenderFunc) string {
-	sb := new(strings.Builder)
+func Render(ctx *fiber.Ctx, f RenderFunc) error {
+	ctx.Type("html")
+	sb := new(bytes.Buffer)
 	f(context.Background(), sb)
-	return sb.String()
+	return ctx.Send(sb.Bytes())
 }
