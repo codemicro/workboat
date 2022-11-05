@@ -1,0 +1,9 @@
+<%
+package views
+
+import "github.com/codemicro/workboat/workboat/paths"
+
+func LoginPage(ctx context.Context, w io.Writer) {
+%>
+    <a href="<%= paths.Make(paths.AuthOauthOutbound) %>">Click here to login via Gitea</a>
+<% } %>

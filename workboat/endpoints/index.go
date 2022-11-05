@@ -26,5 +26,5 @@ func (e *Endpoints) Index(ctx *fiber.Ctx) error {
 		res += fmt.Sprintf("%d %s %s\n", i, repo.Name, repo.HTMLURL)
 	}
 
-	return ctx.SendString("Hello world! You're logged in!\n\n" + res)
+	return ctx.SendString(res)
 }

@@ -107,7 +107,7 @@ func (lsm *loginStateManager) Worker() {
 func (e *Endpoints) AuthLogin(ctx *fiber.Ctx) error {
 	ctx.Type("html")
 	return ctx.SendString(
-		views.LoginPage(),
+		views.Render(views.LoginPage),
 	)
 }
 
