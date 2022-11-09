@@ -7,7 +7,7 @@ import (
 )
 
 func (gc *GiteaClient) ListUserRepositories(token *oauth2.Token) ([]*gitea.Repository, error) {
-	client, err := gc.newAPIClient(token)
+	client, err := gc.newAPIUserClient(token)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}

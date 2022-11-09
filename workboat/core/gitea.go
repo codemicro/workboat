@@ -28,10 +28,16 @@ func NewGiteaClient() *GiteaClient {
 	}
 }
 
-func (gc *GiteaClient) newAPIClient(token *oauth2.Token) (*gitea.Client, error) {
+func (gc *GiteaClient) newAPIUserClient(token *oauth2.Token) (*gitea.Client, error) {
 	return gitea.NewClient(config.Gitea.BaseURL,
 		gitea.SetHTTPClient(gc.oauthConfig.Client(context.Background(), token)),
 		// gitea.SetGiteaVersion(""), // This disables the automatic version check, which we probably don't need to do
+	)
+}
+
+func (gc *GiteaClient) newAPISystemClient() (*gitea.Client, error) {
+	return gitea.NewClient(config.Gitea.BaseURL,
+		gitea.SetToken(config.Gitea.AccessToken),
 	)
 }
 

@@ -18,6 +18,7 @@ const (
 
 	Install                 = "/install"
 	InstallSelectRepository = "/install/selectRepository"
+	InstallDoInstall        = "/install/doInstall"
 )
 
 func Make(path string, replacements ...any) string {

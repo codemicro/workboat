@@ -44,6 +44,7 @@ func (e *Endpoints) SetupApp() *fiber.App {
 
 	app.Get(paths.Install, e.InstallPage)
 	app.Get(paths.InstallSelectRepository, e.InstallPage_SelectRepository)
+	app.Post(paths.InstallDoInstall, e.InstallPage_DoInstall)
 
 	return app
 }

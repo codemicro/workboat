@@ -1,7 +1,6 @@
 package endpoints
 
 import (
-	"fmt"
 	"github.com/codemicro/workboat/workboat/views"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
@@ -35,10 +34,18 @@ func (e *Endpoints) InstallPage_SelectRepository(ctx *fiber.Ctx) error {
 		return errors.WithStack(err)
 	}
 
-	var res string
-	for i, repo := range repos {
-		res += fmt.Sprintf("%d %s %s<br>", i, repo.Name, repo.HTMLURL)
+	return views.Render(ctx, views.InstallPage_SelectRepo(repos))
+}
+
+func (e *Endpoints) InstallPage_DoInstall(ctx *fiber.Ctx) error {
+	session, hasSession, err := e.getSession(ctx)
+	if err != nil {
+		return errors.WithStack(err)
 	}
 
-	return ctx.SendString(res)
+	if !hasSession {
+		return e.loginThenReturn(ctx)
+	}
+	
+	return nil
 }
