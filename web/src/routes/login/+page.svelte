@@ -1,12 +1,12 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { makeURL } from "$lib/urls";
+    import { makeAPIURL } from "$lib/urls";
     import Page from "$lib/components/Page.svelte";
 
     let loginURL :string;
 
     onMount(async () => {
-        const res = await fetch(makeURL("/api/auth/newLogin"));
+        const res = await fetch(makeAPIURL("/api/auth/newLogin"));
         if (!res.ok) {
             return;
         }
