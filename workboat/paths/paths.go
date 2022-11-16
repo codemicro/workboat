@@ -7,10 +7,12 @@ import (
 )
 
 const (
-	Index = "/"
+	Auth = "/auth"
 
-	Auth      = "/auth"
-	AuthLogin = Auth + "/login"
+	API = "/api"
+
+	APIAuth         = API + "/auth"
+	APIAuthNewLogin = APIAuth + "/newLogin"
 
 	AuthOauth         = Auth + "/oauth"
 	AuthOauthOutbound = AuthOauth + "/outbound"

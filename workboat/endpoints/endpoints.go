@@ -36,15 +36,14 @@ func (e *Endpoints) SetupApp() *fiber.App {
 		WriteTimeout: 10 * time.Second,
 	})
 
-	app.Get(paths.Index, e.Index)
-	app.Get(paths.AuthLogin, e.AuthLogin)
+	app.Use("/api", func(ctx *fiber.Ctx) error {
+		ctx.Set(fiber.HeaderAccessControlAllowOrigin, "*")
+		return ctx.Next()
+	})
 
-	app.Get(paths.AuthOauthOutbound, e.AuthOauthOutbound)
 	app.Get(paths.AuthOauthInbound, e.AuthOauthInbound)
 
-	app.Get(paths.Install, e.InstallPage)
-	app.Get(paths.InstallSelectRepository, e.InstallPage_SelectRepository)
-	app.Post(paths.InstallDoInstall, e.InstallPage_DoInstall)
+	app.Get(paths.APIAuthNewLogin, e.AuthOauthGetURL)
 
 	return app
 }

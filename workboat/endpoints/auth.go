@@ -1,6 +1,7 @@
 package endpoints
 
 import (
+	"github.com/codemicro/workboat/workboat/config"
 	"github.com/codemicro/workboat/workboat/db"
 	"sync"
 	"time"
@@ -8,7 +9,6 @@ import (
 	"github.com/codemicro/workboat/workboat/db/models"
 	"github.com/codemicro/workboat/workboat/paths"
 	"github.com/codemicro/workboat/workboat/util"
-	"github.com/codemicro/workboat/workboat/views"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 )
@@ -104,32 +104,19 @@ func (lsm *loginStateManager) Worker() {
 	}
 }
 
-func (e *Endpoints) AuthLogin(ctx *fiber.Ctx) error {
-	return views.Render(ctx, views.LoginPage)
-}
-
-func (e *Endpoints) AuthOauthOutbound(ctx *fiber.Ctx) error {
-	var state string
-	if st := ctx.Query("state"); st != "" && e.loginStateManager.IsValid(st) {
-		state = st
-	} else {
-		st, err := e.loginStateManager.New(paths.Make(paths.Index))
-		if err != nil {
-			return errors.WithStack(err)
-		}
-		state = st
+func (e *Endpoints) AuthOauthGetURL(ctx *fiber.Ctx) error {
+	state, err := e.loginStateManager.New(paths.Make("/"))
+	if err != nil {
+		return errors.WithStack(err)
 	}
 
-	return ctx.Redirect(e.giteaClient.OauthAuthCodeURL(state))
+	return ctx.JSON(e.giteaClient.OauthAuthCodeURL(state))
 }
 
 func (e *Endpoints) AuthOauthInbound(ctx *fiber.Ctx) error {
 	stateFromRequest := ctx.Query("state")
-	var nextURL string
-	if state, err := e.loginStateManager.Use(stateFromRequest); err != nil {
+	if _, err := e.loginStateManager.Use(stateFromRequest); err != nil {
 		return util.NewRichError(fiber.StatusBadRequest, "invalid state", err.Error())
-	} else {
-		nextURL = state.nextURL
 	}
 
 	session, err := e.createSessionFromOauthExchange(ctx.Query("code"))
@@ -139,7 +126,7 @@ func (e *Endpoints) AuthOauthInbound(ctx *fiber.Ctx) error {
 
 	setCookieWithSession(ctx, session)
 
-	return ctx.Redirect(nextURL)
+	return ctx.Redirect(config.HTTP.FrontendURL)
 }
 
 func (e *Endpoints) createSessionFromOauthExchange(code string) (*models.Session, error) {
@@ -177,9 +164,8 @@ func (e *Endpoints) getSession(ctx *fiber.Ctx) (*models.Session, bool, error) {
 
 func setCookieWithSession(ctx *fiber.Ctx, session *models.Session) {
 	ctx.Cookie(&fiber.Cookie{
-		Name:     sessionCookieKey,
-		Value:    session.Token,
-		Expires:  session.ExpiresAt,
-		HTTPOnly: true,
+		Name:    sessionCookieKey,
+		Value:   session.Token,
+		Expires: session.ExpiresAt,
 	})
 }

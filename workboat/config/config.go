@@ -24,10 +24,12 @@ var HTTP = struct {
 	Host        string
 	Port        int
 	ExternalURL string
+	FrontendURL string
 }{
 	Host:        asString(withDefault("http.host", "0.0.0.0")),
 	Port:        asInt(withDefault("http.port", 8080)),
 	ExternalURL: strings.TrimSuffix(asString(required("http.externalURL")), "/"),
+	FrontendURL: strings.TrimSuffix(asString(required("http.frontendURL")), "/"),
 }
 
 var Database = struct {

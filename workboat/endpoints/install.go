@@ -38,14 +38,19 @@ func (e *Endpoints) InstallPage_SelectRepository(ctx *fiber.Ctx) error {
 }
 
 func (e *Endpoints) InstallPage_DoInstall(ctx *fiber.Ctx) error {
-	session, hasSession, err := e.getSession(ctx)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	if !hasSession {
-		return e.loginThenReturn(ctx)
-	}
-	
+	//session, hasSession, err := e.getSession(ctx)
+	//if err != nil {
+	//	return errors.WithStack(err)
+	//}
+	//
+	//if !hasSession {
+	//	return e.loginThenReturn(ctx)
+	//}
+	//
+	//e.giteaClient.CreateRepositoryHook()
+	//
+	//// Create database entry
+	//// Create webhook
+	//
 	return nil
 }
