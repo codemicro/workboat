@@ -7,6 +7,7 @@ import (
 	"github.com/codemicro/workboat/workboat/paths"
 	"github.com/codemicro/workboat/workboat/util"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/proxy"
 	"github.com/pkg/errors"
 	"time"
 )
@@ -42,8 +43,12 @@ func (e *Endpoints) SetupApp() *fiber.App {
 	})
 
 	app.Get(paths.AuthOauthInbound, e.AuthOauthInbound)
-
 	app.Get(paths.APIAuthNewLogin, e.AuthOauthGetURL)
+	app.Get(paths.InstallGetRepository, e.Install_GetRepositories)
+
+	app.Use("/", func(ctx *fiber.Ctx) error {
+		return proxy.Do(ctx, config.HTTP.FrontendURL+ctx.Path())
+	})
 
 	return app
 }

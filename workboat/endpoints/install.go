@@ -1,32 +1,18 @@
 package endpoints
 
 import (
-	"github.com/codemicro/workboat/workboat/views"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 )
 
-func (e *Endpoints) InstallPage(ctx *fiber.Ctx) error {
-	_, hasSession, err := e.getSession(ctx)
-	if err != nil {
-		return errors.WithStack(err)
-	}
-
-	if !hasSession {
-		return e.loginThenReturn(ctx)
-	}
-
-	return views.Render(ctx, views.InstallPage)
-}
-
-func (e *Endpoints) InstallPage_SelectRepository(ctx *fiber.Ctx) error {
+func (e *Endpoints) Install_GetRepositories(ctx *fiber.Ctx) error {
 	session, hasSession, err := e.getSession(ctx)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
 	if !hasSession {
-		return e.loginThenReturn(ctx)
+		return fiber.ErrUnauthorized
 	}
 
 	repos, err := e.giteaClient.ListUserRepositories(session.GiteaToken)
@@ -34,23 +20,43 @@ func (e *Endpoints) InstallPage_SelectRepository(ctx *fiber.Ctx) error {
 		return errors.WithStack(err)
 	}
 
-	return views.Render(ctx, views.InstallPage_SelectRepo(repos))
+	alreadyInstalledIDs := make(map[int64]struct{})
+	{
+		var ids []int64
+		for _, repo := range repos {
+			ids = append(ids, repo.ID)
+		}
+		foundRepos, err := e.db.GetRepositoriesWhereExist(ids)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		for _, fr := range foundRepos {
+			alreadyInstalledIDs[fr.GiteaRepositoryID] = struct{}{}
+		}
+	}
+
+	type resStruct struct {
+		ID   int64  `json:"id"`
+		Name string `json:"name"`
+	}
+
+	var res []*resStruct
+	for _, repo := range repos {
+		if _, found := alreadyInstalledIDs[repo.ID]; found {
+			continue
+		}
+		res = append(res, &resStruct{
+			ID:   repo.ID,
+			Name: repo.FullName,
+		})
+	}
+
+	return ctx.JSON(res)
 }
 
 func (e *Endpoints) InstallPage_DoInstall(ctx *fiber.Ctx) error {
-	//session, hasSession, err := e.getSession(ctx)
-	//if err != nil {
-	//	return errors.WithStack(err)
-	//}
-	//
-	//if !hasSession {
-	//	return e.loginThenReturn(ctx)
-	//}
-	//
-	//e.giteaClient.CreateRepositoryHook()
-	//
-	//// Create database entry
-	//// Create webhook
-	//
+	// Make webhook
+	// Store webhook token
+	// Discover existing configuration files
 	return nil
 }

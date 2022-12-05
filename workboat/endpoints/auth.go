@@ -3,11 +3,11 @@ package endpoints
 import (
 	"github.com/codemicro/workboat/workboat/config"
 	"github.com/codemicro/workboat/workboat/db"
+	"github.com/codemicro/workboat/workboat/paths"
 	"sync"
 	"time"
 
 	"github.com/codemicro/workboat/workboat/db/models"
-	"github.com/codemicro/workboat/workboat/paths"
 	"github.com/codemicro/workboat/workboat/util"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
@@ -105,7 +105,7 @@ func (lsm *loginStateManager) Worker() {
 }
 
 func (e *Endpoints) AuthOauthGetURL(ctx *fiber.Ctx) error {
-	state, err := e.loginStateManager.New(paths.Make("/"))
+	state, err := e.loginStateManager.New(ctx.Query("next", "/"))
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -115,7 +115,8 @@ func (e *Endpoints) AuthOauthGetURL(ctx *fiber.Ctx) error {
 
 func (e *Endpoints) AuthOauthInbound(ctx *fiber.Ctx) error {
 	stateFromRequest := ctx.Query("state")
-	if _, err := e.loginStateManager.Use(stateFromRequest); err != nil {
+	state, err := e.loginStateManager.Use(stateFromRequest)
+	if err != nil {
 		return util.NewRichError(fiber.StatusBadRequest, "invalid state", err.Error())
 	}
 
@@ -126,7 +127,7 @@ func (e *Endpoints) AuthOauthInbound(ctx *fiber.Ctx) error {
 
 	setCookieWithSession(ctx, session)
 
-	return ctx.Redirect(config.HTTP.FrontendURL)
+	return ctx.Redirect(paths.JoinDomainAndPath(config.HTTP.ExternalURL, state.nextURL))
 }
 
 func (e *Endpoints) createSessionFromOauthExchange(code string) (*models.Session, error) {

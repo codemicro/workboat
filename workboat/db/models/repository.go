@@ -6,7 +6,7 @@ import (
 )
 
 type Repository struct {
-	bun.BaseModel `bun:"table:sessions"`
+	bun.BaseModel `bun:"table:repositories"`
 
 	ID                uuid.UUID `bun:"id,pk"`
 	GiteaRepositoryID int64     `bun:"gitea_repository_id,notnull"`

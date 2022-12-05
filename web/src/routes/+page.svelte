@@ -4,16 +4,20 @@
     import Page from "$lib/components/Page.svelte";
 
     let cookieExists = true;
+    let nextURL;
 
     onMount(() => {
         cookieExists = isLoggedIn();
+
+        if (cookieExists) {
+            nextURL = "/dashboard";
+        } else {
+            nextURL = "/login";
+        }
+        window.location.replace(nextURL);
     })
 </script>
 
 <Page>
-    {#if cookieExists}
-        <p>You're logged in!</p>
-    {:else}
-        <a href="/login">Click here to login with Gitea</a>
-    {/if}
+    <p>If you're not redirected shortly, click <a href="{nextURL}">here</a>.</p>
 </Page>

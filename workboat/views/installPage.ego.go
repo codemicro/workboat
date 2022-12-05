@@ -15,50 +15,50 @@ import "code.gitea.io/sdk/gitea"
 
 func InstallPage(ctx context.Context, w io.Writer) {
 
-//line installPage.ego:9
+	//line installPage.ego:9
 	_, _ = io.WriteString(w, "\n    ")
-//line installPage.ego:9
+	//line installPage.ego:9
 	{
 		var EGO Page
 		EGO.Title = "Install into repository"
 		EGO.UseHTMX = true
 		EGO.Yield = func() {
-//line installPage.ego:10
+			//line installPage.ego:10
 			_, _ = io.WriteString(w, "\n        <h2 class=\"mb-2\">Install into repository</h2>\n        <div hx-get=\"")
-//line installPage.ego:11
-			_, _ = io.WriteString(w, html.EscapeString(fmt.Sprint(paths.Make(paths.InstallSelectRepository))))
-//line installPage.ego:11
+			//line installPage.ego:11
+			_, _ = io.WriteString(w, html.EscapeString(fmt.Sprint(paths.Make(paths.InstallGetRepository))))
+			//line installPage.ego:11
 			_, _ = io.WriteString(w, "\" hx-trigger=\"load\" hx-swap=\"outerHTML\">\n            Loading...\n        </div>\n    ")
 		}
 		EGO.Render(ctx, w)
 	}
-//line installPage.ego:15
+	//line installPage.ego:15
 	_, _ = io.WriteString(w, "\n")
-//line installPage.ego:15
+	//line installPage.ego:15
 }
 
 func InstallPage_SelectRepo(repos []*gitea.Repository) RenderFunc {
 	return func(ctx context.Context, w io.Writer) {
 
-//line installPage.ego:20
+		//line installPage.ego:20
 		_, _ = io.WriteString(w, "\n    <form class=\"form\" method=\"post\">\n        <select class=\"form-select\" aria-label=\"Select a repository\" name=\"repository_id\">\n            ")
-//line installPage.ego:22
+		//line installPage.ego:22
 		for _, repo := range repos {
-//line installPage.ego:23
+			//line installPage.ego:23
 			_, _ = io.WriteString(w, "\n                <option value=")
-//line installPage.ego:23
+			//line installPage.ego:23
 			_, _ = io.WriteString(w, html.EscapeString(fmt.Sprint(repo.ID)))
-//line installPage.ego:23
+			//line installPage.ego:23
 			_, _ = io.WriteString(w, ">")
-//line installPage.ego:23
+			//line installPage.ego:23
 			_, _ = io.WriteString(w, html.EscapeString(fmt.Sprint(repo.FullName)))
-//line installPage.ego:23
+			//line installPage.ego:23
 			_, _ = io.WriteString(w, "</option>\n            ")
-//line installPage.ego:24
+			//line installPage.ego:24
 		}
-//line installPage.ego:25
+		//line installPage.ego:25
 		_, _ = io.WriteString(w, "\n        </select>\n        <button type=\"submit\" class=\"btn btn-primary mt-2\">Submit</button>\n    </form>\n")
-//line installPage.ego:28
+		//line installPage.ego:28
 	}
 }
 
