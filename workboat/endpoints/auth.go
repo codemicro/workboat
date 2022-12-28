@@ -2,12 +2,10 @@ package endpoints
 
 import (
 	"github.com/codemicro/workboat/workboat/config"
-	"github.com/codemicro/workboat/workboat/db"
 	"github.com/codemicro/workboat/workboat/paths"
 	"sync"
 	"time"
 
-	"github.com/codemicro/workboat/workboat/db/models"
 	"github.com/codemicro/workboat/workboat/util"
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
@@ -120,53 +118,20 @@ func (e *Endpoints) AuthOauthInbound(ctx *fiber.Ctx) error {
 		return util.NewRichError(fiber.StatusBadRequest, "invalid state", err.Error())
 	}
 
-	session, err := e.createSessionFromOauthExchange(ctx.Query("code"))
+	sess, err := e.createSessionFromOauthExchange(ctx.Query("code"))
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
-	setCookieWithSession(ctx, session)
+	setCookieWithSession(ctx, sess)
 
 	return ctx.Redirect(paths.JoinDomainAndPath(config.HTTP.ExternalURL, state.nextURL))
 }
 
-func (e *Endpoints) createSessionFromOauthExchange(code string) (*models.Session, error) {
-	token, err := e.giteaClient.OauthExchange(code)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	session, err := models.NewSession(token)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	if err := e.db.InsertSession(session); err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	return session, nil
-}
-
-func (e *Endpoints) getSession(ctx *fiber.Ctx) (*models.Session, bool, error) {
-	if cookieValue := ctx.Cookies(sessionCookieKey); cookieValue == "" {
-		return nil, false, nil
-	} else {
-		sess, err := e.db.GetSession(cookieValue)
-		if err != nil {
-			if errors.Is(err, db.ErrNotFound) {
-				return nil, false, nil
-			}
-			return nil, false, errors.WithStack(err)
-		}
-		return sess, true, nil
-	}
-}
-
-func setCookieWithSession(ctx *fiber.Ctx, session *models.Session) {
+func setCookieWithSession(ctx *fiber.Ctx, sess *session) {
 	ctx.Cookie(&fiber.Cookie{
 		Name:    sessionCookieKey,
-		Value:   session.Token,
-		Expires: session.ExpiresAt,
+		Value:   sess.Token,
+		Expires: sess.ExpiresAt,
 	})
 }

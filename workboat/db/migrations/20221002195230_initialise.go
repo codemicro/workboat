@@ -9,7 +9,6 @@ import (
 
 func init() {
 	tps := []any{
-		(*models.Session)(nil),
 		(*models.Repository)(nil),
 	}
 

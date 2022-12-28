@@ -25,11 +25,19 @@ var HTTP = struct {
 	Port        int
 	ExternalURL string
 	FrontendURL string
+	InternalURL string
 }{
 	Host:        asString(withDefault("http.host", "0.0.0.0")),
 	Port:        asInt(withDefault("http.port", 8080)),
 	ExternalURL: strings.TrimSuffix(asString(required("http.externalURL")), "/"),
 	FrontendURL: strings.TrimSuffix(asString(required("http.frontendURL")), "/"),
+	InternalURL: strings.TrimSuffix(asString(get("http.internalURL")), "/"),
+}
+
+func init() {
+	if HTTP.InternalURL == "" {
+		HTTP.InternalURL = HTTP.ExternalURL
+	}
 }
 
 var Database = struct {

@@ -55,6 +55,8 @@ func (e *Endpoints) Install_GetRepositories(ctx *fiber.Ctx) error {
 }
 
 func (e *Endpoints) InstallPage_DoInstall(ctx *fiber.Ctx) error {
+	//giteaRepositoryID := ctx.FormValue("id")
+
 	// Make webhook
 	// Store webhook token
 	// Discover existing configuration files

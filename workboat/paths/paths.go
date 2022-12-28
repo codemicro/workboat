@@ -21,6 +21,8 @@ const (
 	Install              = API + "/install"
 	InstallGetRepository = Install + "/getRepositories"
 	InstallDoInstall     = Install + "/doInstall"
+
+	WebhookInbound = API + "/inboundWebhook"
 )
 
 func JoinDomainAndPath(domain, path string) string {

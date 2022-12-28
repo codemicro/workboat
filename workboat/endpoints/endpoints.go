@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/proxy"
 	"github.com/pkg/errors"
+	"sync"
 	"time"
 )
 
@@ -16,6 +17,8 @@ type Endpoints struct {
 	db                *db.DB
 	loginStateManager *loginStateManager
 	giteaClient       *core.GiteaClient
+	sessions          map[string]*session
+	sessionLock       *sync.Mutex
 }
 
 func New(dbi *db.DB, giteaClient *core.GiteaClient) *Endpoints {
@@ -24,6 +27,8 @@ func New(dbi *db.DB, giteaClient *core.GiteaClient) *Endpoints {
 	e.db = dbi
 	e.loginStateManager = newLoginStateManager()
 	e.giteaClient = giteaClient
+	e.sessions = make(map[string]*session)
+	e.sessionLock = new(sync.Mutex)
 
 	return e
 }
