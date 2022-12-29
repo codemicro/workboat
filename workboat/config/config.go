@@ -21,39 +21,17 @@ var Debug = struct {
 }
 
 var HTTP = struct {
-	Host        string
-	Port        int
-	ExternalURL string
-	FrontendURL string
-	InternalURL string
+	Host string
+	Port int
 }{
-	Host:        asString(withDefault("http.host", "0.0.0.0")),
-	Port:        asInt(withDefault("http.port", 8080)),
-	ExternalURL: strings.TrimSuffix(asString(required("http.externalURL")), "/"),
-	FrontendURL: strings.TrimSuffix(asString(required("http.frontendURL")), "/"),
-	InternalURL: strings.TrimSuffix(asString(get("http.internalURL")), "/"),
-}
-
-func init() {
-	if HTTP.InternalURL == "" {
-		HTTP.InternalURL = HTTP.ExternalURL
-	}
-}
-
-var Database = struct {
-	Filename string
-}{
-	Filename: asString(withDefault("db.filename", "database.db")),
+	Host: asString(withDefault("http.host", "0.0.0.0")),
+	Port: asInt(withDefault("http.port", 8080)),
 }
 
 var Gitea = struct {
-	BaseURL           string
-	OauthClientID     string
-	OauthClientSecret string
-	AccessToken       string
+	BaseURL     string
+	AccessToken string
 }{
-	BaseURL:           strings.TrimSuffix(asString(required("gitea.baseURL")), "/"),
-	OauthClientID:     asString(required("gitea.oauth.clientID")),
-	OauthClientSecret: asString(required("gitea.oauth.clientSecret")),
-	AccessToken:       asString(required("gitea.accessToken")),
+	BaseURL:     strings.TrimSuffix(asString(required("gitea.baseURL")), "/"),
+	AccessToken: asString(required("gitea.accessToken")),
 }
