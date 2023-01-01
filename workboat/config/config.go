@@ -35,3 +35,11 @@ var Gitea = struct {
 	BaseURL:     strings.TrimSuffix(asString(required("gitea.baseURL")), "/"),
 	AccessToken: asString(required("gitea.accessToken")),
 }
+
+var Docker = struct {
+	Image  string
+	Socket string
+}{
+	Image:  asString(required("docker.image")),
+	Socket: asString(required("docker.socket")),
+}

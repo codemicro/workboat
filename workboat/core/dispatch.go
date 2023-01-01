@@ -3,6 +3,7 @@ package core
 import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"net/url"
 	"strings"
 )
 
@@ -14,7 +15,7 @@ func newWorkflowError(err error) error {
 
 func dispatch(event string, body map[string]any) {
 	if err := runDispatch(event, body); err != nil {
-		log.Error().Stack().Err(err).Msg("failed to run dispatch")
+		log.Error().Err(err).Stack().Msg("failed to run dispatch")
 	}
 }
 
@@ -24,10 +25,28 @@ func runDispatch(event string, body map[string]any) error {
 		return nil
 	}
 
-	repoOwner, repoName := getRepositoryNameFromBody(body)
+	rr, found := body["repository"]
+	if !found {
+		return errors.New("unable to decode body")
+	}
 
-	if repoOwner == "" || repoName == "" {
-		return nil
+	r, ok := rr.(map[string]any)
+	if !ok {
+		return errors.New("unable to decode body")
+	}
+
+	fullName := getStringFromBody("full_name", r)
+	splitFullName := strings.Split(fullName, "/")
+
+	if len(splitFullName) != 2 {
+		return errors.New("malformed repository.full_name")
+	}
+
+	repoOwner, repoName := splitFullName[0], splitFullName[1]
+
+	cloneURL := getStringFromBody("clone_url", r)
+	if cloneURL == "" {
+		return errors.New("could not get repository.clone_url from body")
 	}
 
 	ref := getStringFromBody("ref", body)
@@ -49,12 +68,19 @@ func runDispatch(event string, body map[string]any) error {
 	}
 
 	if selectedManifestEntry == nil {
+		log.Debug().Msg("no manifest entry matching target")
 		return nil
+	}
+
+	parsedCloneURL, err := url.Parse(cloneURL)
+	if err != nil {
+		return errors.WithStack(err)
 	}
 
 	enqueueDockerJob(&dockerJob{
 		RepoOwner:     repoOwner,
 		RepoName:      repoName,
+		CloneURL:      parsedCloneURL,
 		ManifestEntry: selectedManifestEntry,
 	})
 

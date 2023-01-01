@@ -10,6 +10,8 @@ import (
 )
 
 func run() error {
+	core.StartJobConsumer()
+
 	httpApp := fiber.New()
 
 	httpApp.Post("/webhook/inbound", core.WebhookHandler)

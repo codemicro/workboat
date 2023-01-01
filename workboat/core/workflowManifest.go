@@ -1,7 +1,9 @@
 package core
 
 import (
+	"encoding/base64"
 	"github.com/pkg/errors"
+	"github.com/rs/zerolog/log"
 	"gopkg.in/yaml.v3"
 )
 
@@ -25,8 +27,15 @@ func getWorkflowManifest(repoOwner, repoName, ref string) (*workflowManifest, er
 		return nil, nil
 	}
 
+	sDec, err := base64.StdEncoding.DecodeString(*fcont.Content)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	log.Debug().Str("manifest_content", *fcont.Content).Send()
+
 	var entries []*workflowManifestEntry
-	if err := yaml.Unmarshal([]byte(*fcont.Content), &entries); err != nil {
+	if err := yaml.Unmarshal(sDec, &entries); err != nil {
 		return nil, newWorkflowError(err)
 	}
 

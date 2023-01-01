@@ -22,7 +22,7 @@ func WebhookHandler(ctx *fiber.Ctx) error {
 	}
 
 	o := make(map[string]any)
-	if err := json.Unmarshal(ctx.Body(), o); err != nil {
+	if err := json.Unmarshal(ctx.Body(), &o); err != nil {
 		ctx.Status(fiber.StatusBadRequest)
 		return ctx.SendString(err.Error())
 	}
