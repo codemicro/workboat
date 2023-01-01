@@ -9,7 +9,7 @@ COMMAND=$3
 GIT_TERMINAL_PROMPTS=0
 
 if [[ "$REPO_URL" == "" || "$COMMAND" == "" ]]; then
-  exit 3
+  exit 785 # TODO: Handle this status code in the Docker run logic
 fi
 
 if [[ $AUTH_STR != "" ]]; then
@@ -17,7 +17,7 @@ if [[ $AUTH_STR != "" ]]; then
   git config --global credential.helper "store --file $(pwd)/gitcred.txt"
 fi
 
-git clone $REPO_URL repository
+git clone $REPO_URL repository > /dev/null
 cd repository
 
 $COMMAND
