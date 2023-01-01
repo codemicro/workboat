@@ -27,5 +27,3 @@ GO_VERSION=1.19.4
   cd /usr/local
   curl -L "https://go.dev/dl/go$GO_VERSION.linux-amd64.tar.gz" | tar xzf -
 )
-echo 'PATH=$PATH:"/usr/local/go/bin"' >> /etc/profile
-echo 'PATH=$PATH:"$HOME/go/bin"' >> /etc/profile
