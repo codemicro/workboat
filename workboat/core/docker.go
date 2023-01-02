@@ -30,10 +30,16 @@ func enqueueDockerJob(job *dockerJob) {
 
 func StartJobConsumer() {
 	go func() {
-		for dj := range jobQueue {
-			err := runDockerJob(dj)
+		for job := range jobQueue {
+			err := runDockerJob(job)
 			if err != nil {
 				log.Error().Err(err).Stack().Msg("failed to run Docker job")
+				if err := ReportRepoStatus(job.RepoOwner, job.RepoName, job.CommitSha, &gitea.CreateStatusOption{
+					State:       gitea.StatusError,
+					Description: "experienced an internal error and aborted",
+				}); err != nil {
+					log.Warn().Err(err).Stack().Msg("unable to report status back to Gitea")
+				}
 			}
 		}
 	}()
@@ -118,6 +124,10 @@ func runDockerJob(job *dockerJob) error {
 	log.Info().Msgf("finished %d", exitStatusCode)
 
 	var statusOpt *gitea.CreateStatusOption
+	
+	if exitStatusCode == 250 {
+		return errors.New("runtime error, code 250")
+	}
 
 	if exitStatusCode == 0 {
 		log.Info().Msgf("removing container %s", container.ID)

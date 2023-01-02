@@ -9,7 +9,7 @@ COMMAND=$3
 GIT_TERMINAL_PROMPTS=0
 
 if [[ "$REPO_URL" == "" || "$COMMAND" == "" ]]; then
-  exit 785 # TODO: Handle this status code in the Docker run logic
+  exit 250
 fi
 
 if [[ $AUTH_STR != "" ]]; then
