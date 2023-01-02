@@ -1,6 +1,7 @@
 package core
 
 import (
+	"code.gitea.io/sdk/gitea"
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"net/url"
@@ -49,6 +50,11 @@ func runDispatch(event string, body map[string]any) error {
 		return errors.New("could not get repository.clone_url from body")
 	}
 
+	commitSha := getStringFromBody("after", body)
+	if commitSha == "" {
+		return errors.New("missing commit sha in after key")
+	}
+
 	ref := getStringFromBody("ref", body)
 
 	manifest, err := getWorkflowManifest(repoOwner, repoName, ref)
@@ -80,9 +86,17 @@ func runDispatch(event string, body map[string]any) error {
 	enqueueDockerJob(&dockerJob{
 		RepoOwner:     repoOwner,
 		RepoName:      repoName,
+		CommitSha:     commitSha,
 		CloneURL:      parsedCloneURL,
 		ManifestEntry: selectedManifestEntry,
 	})
+
+	if err := ReportRepoStatus(repoOwner, repoName, commitSha, &gitea.CreateStatusOption{
+		State:       gitea.StatusPending,
+		Description: "queued, waiting for runner to become available",
+	}); err != nil {
+		log.Warn().Err(err).Stack().Msg("unable to report status back to Gitea")
+	}
 
 	return nil
 }

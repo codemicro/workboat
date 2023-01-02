@@ -37,17 +37,13 @@ func GetFileFromRepository(repoOwner, repoName, fpath, ref string) (*gitea.Conte
 	return fcont, nil
 }
 
-func reportRepoStatus(repoOwner, repoName, commitSha string, state gitea.StatusState) error {
+func ReportRepoStatus(repoOwner, repoName, commitSha string, opt *gitea.CreateStatusOption) error {
+	opt.Context = "Workboat"
 	client, err := newAPISystemClient()
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	_, _, err = client.CreateStatus(repoOwner, repoName, commitSha, gitea.CreateStatusOption{
-		State:       state,
-		TargetURL:   "",
-		Description: "",
-		Context:     "",
-	})
+	_, _, err = client.CreateStatus(repoOwner, repoName, commitSha, *opt)
 
 	return errors.WithStack(err)
 }
